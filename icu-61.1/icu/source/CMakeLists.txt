@@ -26,7 +26,7 @@
 # Configure CMake itself
 #############################################################################
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.3)
 
 if(POLICY CMP0067)
   # Honor language standard in try_compile() source-file signature.

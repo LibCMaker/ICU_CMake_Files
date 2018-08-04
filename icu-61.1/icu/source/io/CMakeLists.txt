@@ -5,6 +5,16 @@
 set(lib_NAME ${ICULIBS_IO})
 set(lib_NAME_SUFFIX ${IO_STUBNAME})
 
+set(private_src_DIR "${CMAKE_CURRENT_LIST_DIR}")
+set(interface_src_DIR "${includedir}")
+set(build_src_DIR
+  "$<BUILD_INTERFACE:${private_src_DIR}>"
+)
+set(install_src_DIR
+  "$<INSTALL_INTERFACE:${interface_src_DIR}>"
+)
+set(public_src_DIR "${build_src_DIR}${install_src_DIR}")
+
 add_library(${lib_NAME} "")
 
 set_target_properties(${lib_NAME} PROPERTIES EXPORT_NAME ${lib_NAME_SUFFIX})
@@ -26,7 +36,7 @@ set_property(TARGET ${lib_NAME} APPEND_STRING PROPERTY
 ### Include directories
 # PRIVATE
 target_include_directories(${lib_NAME} PRIVATE
-  ${CMAKE_CURRENT_LIST_DIR}
+  ${private_src_DIR}
   ${PROJECT_SOURCE_DIR}/common
   ${PROJECT_SOURCE_DIR}/i18n
 )
@@ -38,30 +48,30 @@ target_link_libraries(${lib_NAME} PUBLIC ${ICULIBS_I18N})
 
 target_sources(${lib_NAME}
   PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/locbund.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sprintf.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sscanf.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ucln_io.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ufile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ufmt_cmn.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/uprintf.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/uprntf_p.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/uscanf_p.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/uscanf.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ustdio.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ustream.cpp
+    ${private_src_DIR}/locbund.cpp
+    ${private_src_DIR}/sprintf.cpp
+    ${private_src_DIR}/sscanf.cpp
+    ${private_src_DIR}/ucln_io.cpp
+    ${private_src_DIR}/ufile.cpp
+    ${private_src_DIR}/ufmt_cmn.cpp
+    ${private_src_DIR}/uprintf.cpp
+    ${private_src_DIR}/uprntf_p.cpp
+    ${private_src_DIR}/uscanf_p.cpp
+    ${private_src_DIR}/uscanf.cpp
+    ${private_src_DIR}/ustdio.cpp
+    ${private_src_DIR}/ustream.cpp
 
   PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/locbund.h
-    ${CMAKE_CURRENT_LIST_DIR}/ucln_io.h
-    ${CMAKE_CURRENT_LIST_DIR}/ufile.h
-    ${CMAKE_CURRENT_LIST_DIR}/ufmt_cmn.h
-    ${CMAKE_CURRENT_LIST_DIR}/uprintf.h
-    ${CMAKE_CURRENT_LIST_DIR}/uscanf.h
+    ${private_src_DIR}/locbund.h
+    ${private_src_DIR}/ucln_io.h
+    ${private_src_DIR}/ufile.h
+    ${private_src_DIR}/ufmt_cmn.h
+    ${private_src_DIR}/uprintf.h
+    ${private_src_DIR}/uscanf.h
 
-  PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/ustdio.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/ustream.h
+  PUBLIC
+    ${public_src_DIR}/unicode/ustdio.h
+    ${public_src_DIR}/unicode/ustream.h
 )
 
 install(

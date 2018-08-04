@@ -190,7 +190,7 @@ elseif(EXISTS ${ICU_CROSS_BUILDROOT}/config/icucross.cmake)
   status_message("Using cross buildroot: ${ICU_CROSS_BUILDROOT}")
 elseif(EXISTS ${ICU_CROSS_BUILDROOT})
   error_message(
-    "${crossICU_CROSS_BUILDROOT}/config/icucross.mk not found. Please build ICU in ${ICU_CROSS_BUILDROOT} first."
+    "${crossICU_CROSS_BUILDROOT}/config/icucross.cmake not found. Please build ICU in ${ICU_CROSS_BUILDROOT} first."
   )
 else()
   error_message(

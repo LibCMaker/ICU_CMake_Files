@@ -5,6 +5,16 @@
 set(lib_NAME ${ICULIBS_CTESTFW})
 set(lib_NAME_SUFFIX ${CTESTFW_STUBNAME})
 
+set(private_src_DIR "${CMAKE_CURRENT_LIST_DIR}")
+set(interface_src_DIR "${includedir}")
+set(build_src_DIR
+  "$<BUILD_INTERFACE:${private_src_DIR}>"
+)
+set(install_src_DIR
+  "$<INSTALL_INTERFACE:${interface_src_DIR}>"
+)
+set(public_src_DIR "${build_src_DIR}${install_src_DIR}")
+
 add_library(${lib_NAME} "")
 
 set_target_properties(${lib_NAME} PROPERTIES EXPORT_NAME ${lib_NAME_SUFFIX})
@@ -29,7 +39,7 @@ target_include_directories(${lib_NAME} PRIVATE
   ${PROJECT_SOURCE_DIR}/common
   ${PROJECT_SOURCE_DIR}/i18n
   ${PROJECT_SOURCE_DIR}/tools/toolutil
-  ${CMAKE_CURRENT_LIST_DIR}
+  ${private_src_DIR}
 )
 
 ### Link libraries
@@ -39,22 +49,22 @@ target_link_libraries(${lib_NAME} PUBLIC ${ICULIBS_TOOLUTIL})
 
 target_sources(${lib_NAME}
   PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/datamap.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/testdata.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/tstdtmod.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/uperf.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ctest.c
-    ${CMAKE_CURRENT_LIST_DIR}/ucln_ct.c
+    ${private_src_DIR}/datamap.cpp
+    ${private_src_DIR}/testdata.cpp
+    ${private_src_DIR}/tstdtmod.cpp
+    ${private_src_DIR}/uperf.cpp
+    ${private_src_DIR}/ctest.c
+    ${private_src_DIR}/ucln_ct.c
 
-  PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/ctest.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/datamap.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/testdata.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/testlog.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/testtype.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/tstdtmod.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/uperf.h
-    ${CMAKE_CURRENT_LIST_DIR}/unicode/utimer.h
+  PUBLIC
+    ${public_src_DIR}/unicode/ctest.h
+    ${public_src_DIR}/unicode/datamap.h
+    ${public_src_DIR}/unicode/testdata.h
+    ${public_src_DIR}/unicode/testlog.h
+    ${public_src_DIR}/unicode/testtype.h
+    ${public_src_DIR}/unicode/tstdtmod.h
+    ${public_src_DIR}/unicode/uperf.h
+    ${public_src_DIR}/unicode/utimer.h
 )
 
 install(

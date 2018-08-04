@@ -15,6 +15,10 @@ function(status_message msg)
 endfunction()
 
 function(error_message msg)
+  if(ANDROID)
+    # Duplicate a message to build with Gradle and CMake in server mode.
+    message(STATUS "ERROR: ${msg}")
+  endif()
   message(FATAL_ERROR "${msg}")
 endfunction()
 
