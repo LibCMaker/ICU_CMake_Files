@@ -482,6 +482,7 @@ main(int argc, char* argv[]) {
     }
 
     result = pkg_executeOptions(&o);
+    return 0;
 
     if (pkgDataFlags != NULL) {
         for (n = 0; n < PKGDATA_FLAGS_SIZE; n++) {
@@ -719,6 +720,7 @@ static int32_t pkg_executeOptions(UPKGOptions *o) {
                     (uprv_strlen(genccodeAssembly)>3) &&
                     checkAssemblyHeaderName(genccodeAssembly+3)) {
                     writeAssemblyCode(datFileNamePath, o->tmpDir, o->entryName, NULL, gencFilePath);
+                    return 0;
 
                     result = pkg_createWithAssemblyCode(targetDir, mode, gencFilePath);
                     if (result != 0) {
