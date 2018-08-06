@@ -17,7 +17,10 @@ set(public_src_DIR "${build_src_DIR}${install_src_DIR}")
 
 add_library(${lib_NAME} "")
 
-set_target_properties(${lib_NAME} PROPERTIES EXPORT_NAME ${lib_NAME_SUFFIX})
+set_target_properties(${lib_NAME} PROPERTIES
+  EXPORT_NAME ${lib_NAME_SUFFIX}
+  OUTPUT_NAME ${lib_NAME}${ICULIBSUFFIX_DEBUG}
+)
 
 ### Common libraries options
 include(${PROJECT_SOURCE_DIR}/common_icu_lib_flags.cmake)
@@ -35,6 +38,11 @@ if(MSVC)
       COMPILE_DEFINITIONS U_PLATFORM_USES_ONLY_WIN32_API=1
     )
   endif()
+endif()
+if(MINGW AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  set_property(TARGET ${lib_NAME} APPEND PROPERTY
+    COMPILE_DEFINITIONS U_USE_STRTOD_L=0
+  )
 endif()
 set_property(TARGET ${lib_NAME} APPEND_STRING PROPERTY
   LINK_FLAGS ${LDFLAGSICUI18N}

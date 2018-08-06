@@ -21,11 +21,25 @@ For more info see 'TODO' markers in CMake files.
 For the CMake projects, the ICU library using is tested only in CONFIG mode
 for find_package() command.
 
-Building and sample running are tested on Ubuntu 18.04 with GCC 7.3.0 and
-Clang 6.0.0. Only building is tested with Android NDK 17.1.4828580.
-In these configurations static and shared buildings are tested.
+Building is tested on:
+- Ubuntu 18.04 -- GCC 7.3.0, Clang 6.0.0;
+- Windows 7 -- MSVC from Visual Studio 15 2017;
+- Windows 7 -- MinGW-w64/w32, GCC 7.3.0,
+               CMake generator "MinGW Makefiles"/"MSYS Makefiles";
+- Android NDK 17.1.4828580 on Ubuntu 18.04.
 
-For building with CMake copy the files to ICU source tree and just run:
+Sample running is tested on:
+- Ubuntu 18.04 -- GCC 7.3.0, Clang 6.0.0;
+- Windows 7 -- MSVC from Visual Studio 15 2017;
+- Windows 7 -- MinGW-w64/w32, GCC 7.3.0,
+               CMake generator "MinGW Makefiles"/"MSYS Makefiles".
+
+Static and shared, debug and release buildings are tested in these
+configurations.
+
+For building with CMake copy the CMake files from 'icu-61.1/cmake'
+(and patched files from 'icu-61.1/patches' for MSVC or MinGW)
+to the ICU source tree and just run:
 
 cd ./icu
 mkdir ./build

@@ -175,13 +175,14 @@ install(
 # For cross compilation
 #############################################################################
 
-# config/icucross.mk:
+# config/icucross.cmake:
+# TODO: Use file(GENERATE ) to evaluate the CONFIG_DIR_NAME.
 set(CROSS_BUILD_FILE ${PROJECT_BINARY_DIR}/config/icucross.cmake)
 set(CROSS_BUILD_TEXT
   "
 set(CROSS_ICU_VERSION ${VERSION})
-set(TOOLBINDIR \${ICU_CROSS_BUILDROOT}/bin)
-set(TOOLLIBDIR \${ICU_CROSS_BUILDROOT}/lib)
+set(TOOLBINDIR \${ICU_CROSS_BUILDROOT}/bin${CONFIG_DIR_NAME})
+set(TOOLLIBDIR \${ICU_CROSS_BUILDROOT}/lib${CONFIG_DIR_NAME})
   "
 )
 file(WRITE ${CROSS_BUILD_FILE} ${CROSS_BUILD_TEXT})

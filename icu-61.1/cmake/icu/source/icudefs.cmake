@@ -26,12 +26,12 @@ set(SO_TARGET_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 # The ICU data external name is usually icudata; the entry point name is
 # the version-dependent name (for no particular reason except it was easier
 # to change the build this way). When building in common mode, the data
-# name is the versioned platform-dependent one. 
+# name is the versioned platform-dependent one.
 set(ICUDATA_DIR ${datarootdir}/${PACKAGE}/${PROJECT_VERSION})
 
 set(ICUDATA_BASENAME_VERSION ${ICUPREFIX}dt${PROJECT_VERSION_MAJOR})
-# The entry point is almost like the basename, but has the lib suffix.  
-set(ICUDATA_ENTRY_POINT ${ICUPREFIX}dt${ICULIBSUFFIXCNAME}${PROJECT_VERSION_MAJOR}) 
+# The entry point is almost like the basename, but has the lib suffix.
+set(ICUDATA_ENTRY_POINT ${ICUPREFIX}dt${ICULIBSUFFIXCNAME}${PROJECT_VERSION_MAJOR})
 #set(ICUDATA_CHAR @ICUDATA_CHAR@)  # set in configure_2nd.cmake
 set(ICUDATA_PLATFORM_NAME ${ICUDATA_BASENAME_VERSION}${ICUDATA_CHAR})
 
@@ -103,10 +103,6 @@ set(LIBDIR ${PROJECT_BINARY_DIR}/lib)
 # Location of the executables before "make install" is used
 set(BINDIR ${PROJECT_BINARY_DIR}/bin)
 
-# overridden by icucross.cmake
-set(TOOLBINDIR ${BINDIR})
-set(TOOLLIBDIR ${LIBDIR})
-
 # Name flexibility for the library naming scheme.  Any modifications should
 # be made in the mh- file for the specific platform.
 set(STUBDATA_STUBNAME stubdata)
@@ -122,6 +118,13 @@ if(WIN32)
   set(DATA_STUBNAME dt)
   set(I18N_STUBNAME in)
 endif()
+
+# overridden by icucross.cmake
+if(MSVC)
+  set(CONFIG_DIR_NAME "/$<CONFIG>")
+endif()
+set(TOOLBINDIR ${BINDIR}${CONFIG_DIR_NAME})
+set(TOOLLIBDIR ${LIBDIR}${CONFIG_DIR_NAME})
 
 # TODO: HAVE_ICU_LE_HB set in configure_2nd.cmake
 if(HAVE_ICU_LE_HB)
@@ -198,18 +201,15 @@ set(LDFLAGSCTESTFW " ")
 set(LDFLAGSICUTOOLUTIL " ")
 
 if(MSVC)
-  if(ENABLE_RELEASE)
-    # Make sure that assertions are disabled
-    #list(APPEND CPPFLAGS U_RELEASE=1#M#)
-    list(APPEND CPPFLAGS U_RELEASE=1)
-  endif()
-  if(ENABLE_DEBUG)
-    # Pass debugging flag through
-    #list(APPEND CPPFLAGS _DEBUG=1#M#)
-    list(APPEND CPPFLAGS _DEBUG=1)
-    #set(ICULIBSUFFIX ${ICULIBSUFFIX}d#M#)
-    set(ICULIBSUFFIX ${ICULIBSUFFIX}d)
-  endif()
+  # Make sure that assertions are disabled
+  #list(APPEND CPPFLAGS_RELEASE U_RELEASE=1#M#)
+  list(APPEND CPPFLAGS_RELEASE U_RELEASE=1)
+
+  # Pass debugging flag through
+  #list(APPEND CPPFLAGS_DEBUG _DEBUG=1#M#)
+  list(APPEND CPPFLAGS_DEBUG _DEBUG=1)
+
+  set(ICULIBSUFFIX_DEBUG $<$<CONFIG:Debug>:d>)
 
   # -GF pools strings and places them into read-only memory
   # -EHsc enables exception handling
@@ -231,17 +231,16 @@ if(MSVC)
   #set(LDFLAGSCTESTFW "") # Unused for now.
   # Same as layout. Layout and tools probably won't mix.
   set(LDFLAGSICUTOOLUTIL "${LDFLAGSICUTOOLUTIL} -base:\"0x4ac00000\"")
-  
+
   if(WINDOWS_STORE)
     list(APPEND CPPFLAGS U_PLATFORM_HAS_WINUWP_API=1)
   endif()
 endif()
 
 if(MINGW AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
-  # TODO: we need it?
   ## ICU requires a minimum target of Windows 7, and MinGW does not set this by default.
   ## https://msdn.microsoft.com/en-us/library/aa383745.aspx
-  #list(APPEND CPPFLAGS WINVER=0x0601 _WIN32_WINNT=0x0601)
+  list(APPEND CPPFLAGS WINVER=0x0601 _WIN32_WINNT=0x0601)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_C_COMPILER_ID STREQUAL "GNU")

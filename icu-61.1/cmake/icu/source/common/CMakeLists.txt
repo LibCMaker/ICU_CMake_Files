@@ -17,7 +17,10 @@ set(public_src_DIR "${build_src_DIR}${install_src_DIR}")
 
 add_library(${lib_NAME} "")
 
-set_target_properties(${lib_NAME} PROPERTIES EXPORT_NAME ${lib_NAME_SUFFIX})
+set_target_properties(${lib_NAME} PROPERTIES
+  EXPORT_NAME ${lib_NAME_SUFFIX}
+  OUTPUT_NAME ${lib_NAME}${ICULIBSUFFIX_DEBUG}
+)
 
 ### Common libraries options
 include(${PROJECT_SOURCE_DIR}/common_icu_lib_flags.cmake)
@@ -42,11 +45,9 @@ if(MSVC)
   set_property(TARGET ${lib_NAME} APPEND PROPERTY
     COMPILE_DEFINITIONS U_PLATFORM_USES_ONLY_WIN32_API=1
   )
-  if(ENABLE_DEBUG)
-    set_property(TARGET ${lib_NAME} APPEND PROPERTY
-      COMPILE_DEFINITIONS RBBI_DEBUG
-    )
-  endif()
+  set_property(TARGET ${lib_NAME} APPEND PROPERTY
+    COMPILE_DEFINITIONS $<$<CONFIG:Debug>:RBBI_DEBUG>
+  )
 endif()
 set_property(TARGET ${lib_NAME} APPEND_STRING PROPERTY
   LINK_FLAGS ${LDFLAGSICUUC}

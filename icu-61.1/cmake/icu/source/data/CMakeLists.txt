@@ -111,8 +111,7 @@ set(PKGDATA
   -d ${ICUPKGDATA_OUTDIR}  # --destdir
 )
 
-# TODO: check WIN32 or MSVC, check the out file endings "_dat.obj".
-if(WIN32)
+if(MSVC)
   set(ICUDATA_ASM_FILE ${OUTTMPDIR}/${ICUDATA_PLATFORM_NAME}_dat.obj)
 else()
   set(ICUDATA_ASM_FILE ${OUTTMPDIR}/${ICUDATA_PLATFORM_NAME}_dat.S)
@@ -200,7 +199,7 @@ endif()
 # Unpack the data archive and generate the list of data files
 #############################################################################
 
-if(CMAKE_HOST_WIN32)
+if(CMAKE_HOST_WIN32 AND NOT (CMAKE_GENERATOR STREQUAL "MSYS Makefiles"))
   # protection not needed
   set(extract_pattern *)
 else()
@@ -292,6 +291,7 @@ if(PKGDATA_MODE STREQUAL "dll" OR PKGDATA_MODE STREQUAL "static")
   set_target_properties(${lib_NAME} PROPERTIES
     LINKER_LANGUAGE C
     EXPORT_NAME ${lib_NAME_SUFFIX}
+    OUTPUT_NAME ${lib_NAME}${ICULIBSUFFIX_DEBUG}
   )
 
   ### Common libraries options

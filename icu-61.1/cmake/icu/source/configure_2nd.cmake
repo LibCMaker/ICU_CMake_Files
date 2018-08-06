@@ -25,7 +25,7 @@ function(try_compile_src src_file_name src_file_ext
     "${CMAKE_CURRENT_BINARY_DIR}/try_compile/${file_name}.${src_file_ext}"
   )
   set(bin_dir "${CMAKE_CURRENT_BINARY_DIR}/try_compile/${file_name}")
-  
+
   file(WRITE ${src_file}
   "
       ${header_text}
@@ -35,11 +35,11 @@ function(try_compile_src src_file_name src_file_ext
         return 0;
       }
   ")
-  
+
   if(NOT definitions)
     set(definitions "-DTEMP_TRY_STUB_DEF")
   endif()
-  
+
   if(libraries)
     try_compile(_${out_var} ${bin_dir}
       SOURCES ${src_file}
@@ -54,8 +54,8 @@ function(try_compile_src src_file_name src_file_ext
       OUTPUT_VARIABLE build_OUT
     )
   endif()
-  
-  
+
+
   if(_${out_var})
     set(${out_var} 1 PARENT_SCOPE)
     message(STATUS "Looking for ${out_var} - set to 1 - TRUE")
@@ -114,34 +114,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(CMAKE_CFG_INTDIR STREQUAL "." AND CMAKE_BUILD_TYPE STREQUAL "Debug"
-    OR CMAKE_CFG_INTDIR STREQUAL "Debug")
-  set(ICU_ENABLE_DEBUG ON)
-  set(ICU_ENABLE_RELEASE OFF)
-elseif(CMAKE_CFG_INTDIR STREQUAL "." AND CMAKE_BUILD_TYPE STREQUAL "Release"
-    OR CMAKE_CFG_INTDIR STREQUAL "Release")
-  set(ICU_ENABLE_DEBUG OFF)
-  set(ICU_ENABLE_RELEASE ON)
-endif()
-
 # Check whether to build debug libraries
-#option(ICU_ENABLE_DEBUG
-#  "Build debug libraries and enable the U_DEBUG define" OFF
-#)
-set(ENABLE_DEBUG 0)
-if(ICU_ENABLE_DEBUG)
-  set(ENABLE_DEBUG 1)
-  list(APPEND CONFIG_CPPFLAGS U_DEBUG=1)
-endif()
-check_message("whether to build debug libraries" ${ICU_ENABLE_DEBUG})
+#check_message("whether to build debug libraries" ${ENABLE_DEBUG})
+list(APPEND CPPFLAGS_DEBUG U_DEBUG=1)
 
 # Check whether to build release libraries
-#option(ICU_ENABLE_RELEASE "Build release libraries" ON)
-set(ENABLE_RELEASE 1)
-if(NOT ICU_ENABLE_RELEASE)
-  set(ENABLE_RELEASE 0)
-endif()
-check_message("whether to build release libraries" ${ICU_ENABLE_RELEASE})
+#check_message("whether to build release libraries" ${ENABLE_RELEASE})
 
 # TODO: see:
 # http://userguide.icu-project.org/layoutengine/paragraph
@@ -261,7 +239,7 @@ check_message("whether to build shared libraries" ${ICU_ENABLE_SHARED})
 check_message("whether to build static libraries" ${ICU_ENABLE_STATIC})
 
 # When building release static library, there might be some optimization flags we can use
-if(ICU_ENABLE_STATIC AND NOT ICU_ENABLE_SHARED AND ICU_ENABLE_RELEASE)
+if(ICU_ENABLE_STATIC AND NOT ICU_ENABLE_SHARED)
   set(_HAVE_STATIC_OPTIMIZATION no)
   if(UNIX AND NOT APPLE AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
     list(APPEND ST_OPT_CPPFLAGS -ffunction-sections -fdata-sections)
@@ -276,8 +254,8 @@ if(ICU_ENABLE_STATIC AND NOT ICU_ENABLE_SHARED AND ICU_ENABLE_RELEASE)
     )
     if(_HAVE_STATIC_OPTIMIZATION)
       #list(APPEND CPPFLAGS ${ST_OPT_CPPFLAGS})
-      list(APPEND CFLAGS ${ST_OPT_CPPFLAGS})
-      set(LDFLAGS "${LDFLAGS} ${ST_OPT_LDFLAGS}")
+      list(APPEND CFLAGS_RELEASE ${ST_OPT_CPPFLAGS})
+      set(LDFLAGS_RELEASE "${LDFLAGS} ${ST_OPT_LDFLAGS}")
     endif()
   endif()
   check_message("whether we can use static library optimization option"
@@ -397,7 +375,7 @@ if(U_ENABLE_DYLOAD)
   else()
     set(HAVE_DLFCN_H 0)
   endif()
-  
+
   if(NOT HAVE_DLFCN_H OR NOT HAVE_DLOPEN)
     list(APPEND CONFIG_CPPFLAGS HAVE_DLOPEN=0)
   endif()
@@ -469,7 +447,11 @@ check_message("for mmap" ${HAVE_MMAP})
 # Check to see if genccode can generate simple assembly.
 set(GENCCODE_ASSEMBLY "")
 if(MINGW)
-  set(GENCCODE_ASSEMBLY "-a gcc-mingw64")
+  if( CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(GENCCODE_ASSEMBLY "-a gcc-mingw64")  # 64 bits
+  else()
+    set(GENCCODE_ASSEMBLY "-a gcc-cygwin")   # 32 bits
+  endif()
 elseif(APPLE)
   set(GENCCODE_ASSEMBLY "-a gcc-darwin")
 elseif(UNIX)  # for GCC and clang
@@ -524,7 +506,7 @@ check_symbol_exists("nl_langinfo" "langinfo.h" _HAVE_NL_LANGINFO)
 if(_HAVE_NL_LANGINFO)
   set(HAVE_NL_LANGINFO 1)
   set(U_HAVE_NL_LANGINFO 1)
-  
+
   set(NL_LANGINFO_CODESET "unknown")
   foreach(nl_item CODESET _NL_CTYPE_CODESET_NAME)
     try_compile_src("check_nl_langinfo_item" "c"
@@ -539,7 +521,7 @@ if(_HAVE_NL_LANGINFO)
       break()
     endif()
   endforeach()
-  
+
   if(_NL_LANGINFO_CODESET)
     set(U_HAVE_NL_LANGINFO_CODESET 1)
     set(U_NL_LANGINFO_CODESET ${NL_LANGINFO_CODESET})
@@ -549,10 +531,13 @@ if(_HAVE_NL_LANGINFO)
   else()
     list(APPEND CONFIG_CPPFLAGS U_HAVE_NL_LANGINFO_CODESET=0)
   endif()
-  
+
 else()
   set(HAVE_NL_LANGINFO 0)
   set(U_HAVE_NL_LANGINFO 0)
+  if(MINGW AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    list(APPEND CONFIG_CPPFLAGS U_HAVE_NL_LANGINFO_CODESET=0)
+  endif()
 endif()
 
 # Namespace support checks
@@ -886,7 +871,7 @@ set(CHECK_UTF16_STRING_RESULT "unknown")
 if(CMAKE_C_STANDARD EQUAL 99 OR CMAKE_C_STANDARD GREATER 10)
   set(U_CHECK_UTF16_STRING 1)
   set(CHECK_UTF16_STRING_RESULT "C only")
-else()  
+else()
   set(U_CHECK_UTF16_STRING 0)
 endif()
 if(NOT CMAKE_CXX_STANDARD EQUAL 98 AND CMAKE_CXX_STANDARD GREATER 10)
@@ -896,7 +881,7 @@ if(NOT CMAKE_CXX_STANDARD EQUAL 98 AND CMAKE_CXX_STANDARD GREATER 10)
   else()
     set(CHECK_UTF16_STRING_RESULT "C++ only")
   endif()
-else()  
+else()
   set(U_CHECK_UTF16_STRING 0)
 endif()
 status_message("for UTF-16 string literal support  ${CHECK_UTF16_STRING_RESULT}")
@@ -1123,7 +1108,7 @@ Creating the file ${HDRFILE}
 ---------------   ${HDRFILE_NAME}
     "
   )
-    
+
   set(HDRFILE_TEXT
     "/* ICU customizations: put these lines at the top of uconfig.h */\n\n"
   )
