@@ -20,6 +20,8 @@ For iOS, Android and Microsoft Store (Windows Store) platforms is always 'auto'.
 
 For more info see 'TODO' markers in CMake files.
 
+ICU 58.2 and ICU 61.1 are supported.
+
 For the CMake projects, the ICU library using is tested only in CONFIG mode
 for find_package() command.
 
@@ -34,13 +36,17 @@ Sample running is tested on:
 - Ubuntu 18.04 -- GCC 7.3.0, Clang 6.0.0;
 - Windows 7 -- MSVC from Visual Studio 15 2017;
 - Windows 7 -- MinGW-w64/w32, GCC 7.3.0,
-               CMake generator "MinGW Makefiles"/"MSYS Makefiles".
+               CMake generator "MinGW Makefiles"/"MSYS Makefiles";
+- Windows XP SP3 -- built on Windows 7, MSVC from Visual Studio 15 2017
+                    with '-T v141_xp' toolset (ICU 58.2).
 
 Static and shared, debug and release buildings are tested in these
 configurations.
 
-For building with CMake copy the CMake files from 'icu-61.1/cmake'
-(and patched files from 'icu-61.1/patches' for MSVC or MinGW)
+It works with the CMake 3.3 and higher.
+
+For building with CMake copy the CMake files from 'icu/'
+(and patched files from 'patches/icu-<version>/' for MSVC or MinGW)
 to the ICU source tree and just run:
 
 ```
