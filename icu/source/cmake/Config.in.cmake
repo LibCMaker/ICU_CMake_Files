@@ -77,13 +77,16 @@ endfunction()
 
 
 # Find the required libraries
-if(@HAVE_THREADS@)
-  find_package(Threads REQUIRED)
+if(@HAVE_THREADS@ AND NOT TARGET Threads::Threads)
+  message(FATAL_ERROR
+    "Target 'Threads::Threads' is NOT defined, use find_package(Threads) to define it."
+  )
+#  find_package(Threads REQUIRED)
 endif()
 if(@HAVE_LIB_M@)
   find_library(LIB_M_LOCATION NAMES m)
   if(NOT LIB_M_LOCATION)
-    message(STATUS "'m' library is not found.")
+    message(FATAL_ERROR "'m' library is not found.")
   endif()
 #  set(LIB_M_TARGET @LIB_M_TARGET@)
 #  add_library(${LIB_M_TARGET} SHARED IMPORTED)
@@ -94,7 +97,7 @@ endif()
 if(@HAVE_LIB_DL@)
   find_library(LIB_DL_LOCATION NAMES ${CMAKE_DL_LIBS})
   if(NOT LIB_DL_LOCATION)
-    message(STATUS "'${CMAKE_DL_LIBS}' library is not found.")
+    message(FATAL_ERROR "'${CMAKE_DL_LIBS}' library is not found.")
   endif()
 #  set(LIB_DL_TARGET @LIB_DL_TARGET@)
 #  add_library(${LIB_DL_TARGET} SHARED IMPORTED)
