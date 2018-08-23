@@ -200,25 +200,28 @@ check_message("whether strict compiling is on" ${ICU_ENABLE_STRICT})
 # Checks for libraries and other host specific stuff.
 # TODO: On HP/UX, don't link to -lm from a shared lib
 # because it isn't PIC (at least on 10.2).
-find_library(LIB_M_LOCATION NAMES "m")
-set(HAVE_LIB_M OFF)
-if(LIB_M_LOCATION)
-  try_compile_src("for_lib_m" "c"
-    "#include <math.h>"
-    "double d = floor(2.0);"
-    ""
-    "${LIB_M_LOCATION}"
-    _HAVE_LIB_M
-  )
-  if(_HAVE_LIB_M)
-    set(HAVE_LIB_M ON)
-#    set(LIB_M_TARGET "${TARGETS_NAMESPACE}m")
-#    add_library(${LIB_M_TARGET} SHARED IMPORTED)
-#    set_target_properties(${LIB_M_TARGET} PROPERTIES
-#      IMPORTED_LOCATION "${LIB_M_LOCATION}"
-#    )
-#    list(INSERT LIBS 0 ${LIB_M_TARGET})
-    list(INSERT LIBS 0 "m")
+option(ICU_USE_LIB_M "Compile with 'm' library." ON)
+if(ICU_USE_LIB_M)
+  find_library(LIB_M_LOCATION NAMES "m")
+  set(HAVE_LIB_M OFF)
+  if(LIB_M_LOCATION)
+    try_compile_src("for_lib_m" "c"
+      "#include <math.h>"
+      "double d = floor(2.0);"
+      ""
+      "${LIB_M_LOCATION}"
+      _HAVE_LIB_M
+    )
+    if(_HAVE_LIB_M)
+      set(HAVE_LIB_M ON)
+#      set(LIB_M_TARGET "${TARGETS_NAMESPACE}m")
+#      add_library(${LIB_M_TARGET} SHARED IMPORTED)
+#      set_target_properties(${LIB_M_TARGET} PROPERTIES
+#        IMPORTED_LOCATION "${LIB_M_LOCATION}"
+#      )
+#      list(INSERT LIBS 0 ${LIB_M_TARGET})
+      list(INSERT LIBS 0 "m")
+    endif()
   endif()
 endif()
 
@@ -806,11 +809,16 @@ if(NOT HAVE_TYPE_uint64_t)
 endif()
 
 # Do various wchar_t related checks
+option(ICU_USE_WCS_OR_W_LIB "Compile with 'wxs' or 'w' libraries." ON)
 check_include_file("wchar.h" _HAVE_WCHAR_H)
 if(_HAVE_WCHAR_H)
   set(HAVE_WCHAR_H 1)
   set(U_HAVE_WCHAR_H 1)
-  foreach(lib "" wcs w)
+  set(wcs_w_lib "")
+  if(ICU_USE_WCS_OR_W_LIB)
+    set(wcs_w_lib "" wcs w)
+  endif()
+  foreach(lib ${wcs_w_lib})
     if(lib)
       find_library(HAVE_LIB_${lib} NAMES ${lib})
       if(NOT HAVE_LIB_${lib})
