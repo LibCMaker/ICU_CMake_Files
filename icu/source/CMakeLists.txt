@@ -26,7 +26,13 @@
 # Configure CMake itself
 #############################################################################
 
-cmake_minimum_required(VERSION 3.3)
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
+  message(STATUS "CMake 3.11+ is required for Visual Studio generator.")
+  cmake_minimum_required(VERSION 3.11)
+else()
+  cmake_minimum_required(VERSION 3.4)
+endif()
 
 if(POLICY CMP0067)
   # Honor language standard in try_compile() source-file signature.
