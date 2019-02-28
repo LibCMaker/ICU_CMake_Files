@@ -18,7 +18,7 @@ ICU data building from scratch ('files' mode) is not released.
 Now ICU_DATA_PACKAGING can be 'archive', 'library', 'static' and 'auto'.
 For iOS, Android and Microsoft Store (Windows Store) platforms is always 'auto'.
 
-For more info see 'TODO' markers in CMake files.
+For more info see 'TODO' markers in CMake files and [ICU-7747](https://unicode-org.atlassian.net/browse/ICU-7747).
 
 ICU 58.2 and ICU 61.1 are supported.
 
@@ -42,6 +42,8 @@ Sample running is tested on:
 
 Static and shared, debug and release buildings are tested in these
 configurations.
+
+Also see [LibCMaker build status](https://github.com/LibCMaker/LibCMaker#build-status) for LibCMaker_ICU which is used the files, for more test configurations.
 
 It works with the CMake 3.3 and higher.
 
@@ -95,7 +97,7 @@ cmake ../ \
  -DCMAKE_INSTALL_PREFIX=inst
 ```
 
-Available the next options (in the brackets are default values):
+Available the next options (in the parentheses are default values):
 
 ```
 # Enable cross compiling.
