@@ -20,9 +20,9 @@ For iOS, Android and Microsoft Store (Windows Store) platforms is always 'auto'.
 
 For more info see 'TODO' markers in CMake files and [ICU-7747](https://unicode-org.atlassian.net/browse/ICU-7747).
 
-ICU 58.2 and ICU 61.1 are supported.
+ICU 58.2, ICU 61.1, ICU 62.1, ICU 63.1 are supported.
 
-For the CMake projects, the ICU library using is tested only in CONFIG mode
+For the CMake projects, the ICU library using is tested in CONFIG and MODULE modes
 for find_package() command.
 
 Building is tested on:
