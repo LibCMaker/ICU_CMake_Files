@@ -120,7 +120,7 @@ if(WIN32)
 endif()
 
 # overridden by icucross.cmake
-if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
+if(CMAKE_GENERATOR MATCHES "Visual Studio.*" OR CMAKE_GENERATOR MATCHES "Xcode")
   set(CONFIG_DIR_NAME "/$<CONFIG>")
 endif()
 set(TOOLBINDIR ${BINDIR}${CONFIG_DIR_NAME})

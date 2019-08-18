@@ -175,10 +175,14 @@ if(NOT ICUDATA_SOURCE_ARCHIVE)
   # and convert it to the current type.
   if(ICUDATA_ARCHIVE)
     set(ICUDATA_SOURCE_ARCHIVE ${OUTDIR}/${ICUDATA_SOURCE_ARCHIVE_FILE_NAME})
-    add_custom_command(OUTPUT ${ICUDATA_SOURCE_ARCHIVE}
+    set(icudata_source_archive_STAMP "${OUTDIR}/icudata_source_archive_stamp")
+
+    add_custom_command(
+      OUTPUT ${ICUDATA_SOURCE_ARCHIVE} ${icudata_source_archive_STAMP}
       COMMAND ${TOOLBINDIR}/icupkg
         -t${ICUDATA_CHAR}  # --type
         ${ICUDATA_ARCHIVE} ${ICUDATA_SOURCE_ARCHIVE}
+      COMMAND ${CMAKE_COMMAND} -E touch ${icudata_source_archive_STAMP}
       DEPENDS ${deps_icupkg} ${ICUDATA_ARCHIVE} # ${OUTDIR}
       COMMENT
         "Convert ${ICUDATA_ARCHIVE} to ${ICUDATA_SOURCE_ARCHIVE}"
@@ -213,7 +217,10 @@ elseif(PKGDATA_MODE STREQUAL "dll" OR PKGDATA_MODE STREQUAL "static")
   #build-local: build-dir $(SO_VERSION_DATA) $(PKGDATA_LIST) $(OS390LIST)
   #${PKGDATA_LIST}: ${SRCLISTDEPS} ${ICUDATA_SOURCE_ARCHIVE}
   if(NOT ICUDATA_SOURCE_IS_NATIVE_TARGET)
-    add_custom_command(OUTPUT ${PKGDATA_LIST}
+    set(pkgdata_list_STAMP "${OUTDIR}/pkgdata_list_stamp")
+
+    add_custom_command(
+      OUTPUT ${PKGDATA_LIST} ${pkgdata_list_STAMP}
       COMMAND ${CMAKE_COMMAND} -E remove -f ${PKGDATA_LIST}
       COMMAND ${TOOLBINDIR}/icupkg
         -d ${BUILDDIR}  # --destdir
@@ -221,7 +228,9 @@ elseif(PKGDATA_MODE STREQUAL "dll" OR PKGDATA_MODE STREQUAL "static")
         -x ${extract_pattern}  # --extract
         ${ICUDATA_SOURCE_ARCHIVE}
         -o ${PKGDATA_LIST}  # --outlist
-      DEPENDS ${deps_icupkg} ${ICUDATA_SOURCE_ARCHIVE} # ${BUILD_DIRS}
+      COMMAND ${CMAKE_COMMAND} -E touch ${pkgdata_list_STAMP}
+      DEPENDS ${deps_icupkg} ${ICUDATA_SOURCE_ARCHIVE}
+        ${icudata_source_archive_STAMP} # ${BUILD_DIRS}
       COMMENT
         "Unpacking ${ICUDATA_SOURCE_ARCHIVE} and generating ${PKGDATA_LIST} (list of data files)"
     )
@@ -256,7 +265,10 @@ if(PKGDATA_MODE STREQUAL "dll" OR PKGDATA_MODE STREQUAL "static")
 endif()
 
 if(ADD_icudata_asm_target)
-  add_custom_command(OUTPUT ${ICUDATA_ASM_FILE}
+  set(icudata_asm_file_STAMP "${OUTDIR}/icudata_asm_file_stamp")
+
+  add_custom_command(
+    OUTPUT ${ICUDATA_ASM_FILE} ${icudata_asm_file_STAMP}
     COMMAND ${PKGDATA}
       -e ${ICUDATA_ENTRY_POINT}  # --entrypoint
       -T ${OUTTMPDIR}            # --tempdir
@@ -265,11 +277,14 @@ if(ADD_icudata_asm_target)
       ${PKGDATA_VERSIONING}
       ${asm_PKGDATA_LIBNAME}
       ${PKGDATA_LIST}
-    DEPENDS ${deps_pkgdata} ${PKGDATA_LIST} # ${ICUPKG_INC}
+    COMMAND ${CMAKE_COMMAND} -E touch ${icudata_asm_file_STAMP}
+    DEPENDS ${deps_pkgdata} ${PKGDATA_LIST} ${pkgdata_list_STAMP} # ${ICUPKG_INC}
     COMMENT
       "Packing data to the asm file ${ICUDATA_ASM_FILE}"
   )
-  add_custom_target(icudata_asm_target DEPENDS ${ICUDATA_ASM_FILE})
+  add_custom_target(icudata_asm_target
+    DEPENDS ${ICUDATA_ASM_FILE} ${icudata_asm_file_STAMP}
+  )
 endif()
 
 #if(ICUDATA_SOURCE_IS_NATIVE_TARGET)

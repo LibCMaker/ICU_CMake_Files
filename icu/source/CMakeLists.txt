@@ -30,6 +30,9 @@
 if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
   message(STATUS "CMake 3.11+ is required for Visual Studio generator.")
   cmake_minimum_required(VERSION 3.11)
+elseif(CMAKE_GENERATOR MATCHES "Xcode")
+  message(STATUS "CMake 3.12+ is required for Xcode generator.")
+  cmake_minimum_required(VERSION 3.12)
 else()
   cmake_minimum_required(VERSION 3.4)
 endif()
@@ -182,7 +185,6 @@ install(
 #############################################################################
 
 # config/icucross.cmake:
-# TODO: Use file(GENERATE ) to evaluate the CONFIG_DIR_NAME.
 set(CROSS_BUILD_FILE ${PROJECT_BINARY_DIR}/config/icucross.cmake)
 set(CROSS_BUILD_TEXT
   "
@@ -191,4 +193,8 @@ set(TOOLBINDIR \${ICU_CROSS_BUILDROOT}/bin${CONFIG_DIR_NAME})
 set(TOOLLIBDIR \${ICU_CROSS_BUILDROOT}/lib${CONFIG_DIR_NAME})
   "
 )
-file(WRITE ${CROSS_BUILD_FILE} ${CROSS_BUILD_TEXT})
+file(
+  GENERATE OUTPUT ${CROSS_BUILD_FILE}
+  CONTENT ${CROSS_BUILD_TEXT}
+  CONDITION $<CONFIG:Release>
+)
