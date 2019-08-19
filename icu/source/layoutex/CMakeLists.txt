@@ -19,7 +19,10 @@ add_library(${lib_NAME} "")
 
 set_target_properties(${lib_NAME} PROPERTIES
   EXPORT_NAME ${lib_NAME_SUFFIX}
-  OUTPUT_NAME ${lib_NAME}${ICULIBSUFFIX_DEBUG}
+  OUTPUT_NAME
+    ${STATIC_PREFIX}${lib_NAME}${ICULIBSUFFIX_DEBUG}
+  RUNTIME_OUTPUT_NAME
+    ${STATIC_PREFIX}${lib_NAME}${ICULIBSUFFIX_VERSION}${ICULIBSUFFIX_DEBUG}
 )
 
 ### Common libraries options

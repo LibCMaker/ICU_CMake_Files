@@ -13,6 +13,11 @@ set(includedir  ${CMAKE_INSTALL_INCLUDEDIR})
 set(mandir      ${CMAKE_INSTALL_MANDIR})
 set(sysconfdir  ${CMAKE_INSTALL_SYSCONFDIR})
 
+if(MSVC AND "${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+  set(bindir "bin64")
+  set(libdir "lib64")
+endif()
+
 # Package information
 set(PACKAGE_ICU_DESCRIPTION "International Components for Unicode")
 set(PACKAGE_ICU_URL "http://icu-project.org")
@@ -209,6 +214,11 @@ if(MSVC)
   #list(APPEND CPPFLAGS_DEBUG _DEBUG=1#M#)
   list(APPEND CPPFLAGS_DEBUG _DEBUG=1)
 
+  if(NOT BUILD_SHARED_LIBS)
+    # Static library prefix
+    set(STATIC_PREFIX "s")
+  endif()
+  set(ICULIBSUFFIX_VERSION ${PROJECT_VERSION_MAJOR})
   set(ICULIBSUFFIX_DEBUG $<$<CONFIG:Debug>:d>)
 
   # -GF pools strings and places them into read-only memory
