@@ -18,19 +18,22 @@ ICU data building from scratch ('files' mode) is not released.
 Now ICU_DATA_PACKAGING can be 'archive', 'library', 'static' and 'auto'.
 For iOS, Android and Microsoft Store (Windows Store) platforms is always 'auto'.
 
-For more info see 'TODO' markers in CMake files and [ICU-7747](https://unicode-org.atlassian.net/browse/ICU-7747).
+For more info see 'TODO' markers in CMake files and
+[ICU-7747](https://unicode-org.atlassian.net/browse/ICU-7747).
 
 ICU 58.2, ICU 61.1, ICU 62.1, ICU 63.1 are supported.
 
-For the CMake projects, the ICU library using is tested in CONFIG and MODULE modes
-for find_package() command.
+For the CMake projects, the ICU library using is tested in CONFIG
+and MODULE modes for find_package() command.
 
 Building is tested on:
 - Ubuntu 18.04 -- GCC 7.3.0, Clang 6.0.0;
 - Windows 7 -- MSVC from Visual Studio 15 2017;
 - Windows 7 -- MinGW-w64/w32, GCC 7.3.0,
                CMake generator "MinGW Makefiles"/"MSYS Makefiles";
-- Android NDK 17.1.4828580 on Ubuntu 18.04.
+- Android NDK 17.1.4828580 on Ubuntu 18.04;
+- macOS 10.14 -- Xcode 10.2.1, Apple Clang 10.0.1;
+- iOS -- Xcode 10.2.1, Apple Clang 10.0.1, SDK iPhoneSimulator12.2.
 
 Sample running is tested on:
 - Ubuntu 18.04 -- GCC 7.3.0, Clang 6.0.0;
@@ -38,14 +41,19 @@ Sample running is tested on:
 - Windows 7 -- MinGW-w64/w32, GCC 7.3.0,
                CMake generator "MinGW Makefiles"/"MSYS Makefiles";
 - Windows XP SP3 -- built on Windows 7, MSVC from Visual Studio 15 2017
-                    with '-T v141_xp' toolset (ICU 58.2).
+                    with '-T v141_xp' toolset (ICU 58.2);
+- macOS 10.14 -- Xcode 10.2.1, Apple Clang 10.0.1.
 
 Static and shared, debug and release buildings are tested in these
 configurations.
 
-Also see [LibCMaker build status](https://github.com/LibCMaker/LibCMaker#build-status) for LibCMaker_ICU which is used the files, for more test configurations.
+Also see
+[LibCMaker build status](https://github.com/LibCMaker/LibCMaker#build-status)
+for LibCMaker_ICU which is used the files, for more test configurations.
 
-It works with the CMake 3.3 and higher.
+It works with the CMake 3.4 and higher.
+CMake 3.11+ is required for Visual Studio generator.
+CMake 3.12+ is required for Xcode generator.
 
 For building with CMake copy the CMake files from 'icu/'
 (and patched files from 'patches/icu-<version>/' for MSVC or MinGW)
