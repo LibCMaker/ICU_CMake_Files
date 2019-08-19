@@ -48,6 +48,7 @@ configurations.
 It works with the CMake 3.4 and higher.
 CMake 3.11+ is required for Visual Studio generator.
 CMake 3.12+ is required for Xcode generator.
+Use Ninja with MSVC for the CMake 3.4+, tested with the Ninja 1.8.2.
 
 For building with CMake copy the CMake files from 'icu/'
 (and patched files from 'patches/icu-<version>/' for MSVC or MinGW)
